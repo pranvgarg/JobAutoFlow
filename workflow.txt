@@ -1,0 +1,23 @@
+(Job Description & Resume Upload) 
+      |
+      ├──> [Parallelized Job & Resume Extraction]
+      |             ├──> (Job Description Parser)
+      |             ├──> (Resume Parser)
+      |             
+      └──> [Routing to Best-Matching Resume]
+                   |
+                   ├──> (Resume A)  ─────────────> [Cover Letter Orchestrator]
+                   ├──> (Resume B)  ───> (Discard)
+                   ├──> (Resume C)  ───> (Discard)
+                                    |
+                                    ├──> (LLM Call 1: Draft Cover Letter)
+                                    ├──> (LLM Call 2: Improve Tone & Structure)
+                                    ├──> (LLM Call 3: Add Company-Specific Details)
+                                    ├──> [Synthesizer: Final Cover Letter Output]
+                 
+      └──> [Evaluator-Optimizer for Resume Refinement]
+                   |
+                   ├──> (Skill Matching & Gap Analysis)
+                   ├──> (Bullet Point Optimization)
+                   ├──> (Final ATS Score Before & After)
+                   ├──> [Evaluator Loop: Approve or Refine]
