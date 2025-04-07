@@ -17,7 +17,8 @@ from my_agent.utils.nodes import (
     user_feedback_final_review,
     export_final_documents,
     route_optimization,
-    check_gpt_model
+    check_gpt_model,
+    evaluate_optimization # ADD THIS LINE
 )
 from langchain.output_parsers import PydanticOutputParser
 from my_agent.utils.state import AgentState
@@ -51,6 +52,7 @@ workflow.add_node("perform_gap_analysis", gap_analysis)
 workflow.add_node("generate_optimization_recommendations", generate_optimization_recommendations)
 workflow.add_node("generate_optimized_resume_draft", generate_optimized_resume_draft)
 workflow.add_node("evaluate_ats_score", evaluate_ats_score)
+workflow.add_node("evaluate_optimization", evaluate_optimization) # ADD THIS LINE
 workflow.add_node("apply_targeted_improvements", apply_targeted_improvements)
 workflow.add_node("generate_cover_letter_and_cold_email", generate_cover_letter_and_cold_email)
 workflow.add_node("user_feedback_final_review", user_feedback_final_review)
@@ -70,9 +72,10 @@ workflow.add_edge("semantic_matching", "perform_gap_analysis")
 workflow.add_edge("perform_gap_analysis", "generate_optimization_recommendations")
 workflow.add_edge("generate_optimization_recommendations", "generate_optimized_resume_draft")
 workflow.add_edge("generate_optimized_resume_draft", "evaluate_ats_score")
+workflow.add_edge("evaluate_ats_score", "evaluate_optimization") # ADD THIS LINE
 
 workflow.add_conditional_edges(
-    "evaluate_ats_score",
+    "evaluate_optimization", # CHANGE THIS LINE
     route_optimization,
     {
         "apply_targeted_improvements": "apply_targeted_improvements",
@@ -81,7 +84,7 @@ workflow.add_conditional_edges(
 )
 
 workflow.add_edge("apply_targeted_improvements", "generate_optimized_resume_draft")
-workflow.add_edge("generate_cover_letter_and_cold_email", "user_feedback_final_review")
+workflow.add_edge("generate_cover_letter_and_cold_email", "user_feedback_final_review") # ADD THIS LINE
 workflow.add_edge("user_feedback_final_review", "export_final_documents")
 workflow.add_edge("export_final_documents", END)
 
