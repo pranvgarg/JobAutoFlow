@@ -478,6 +478,23 @@ def semantic_matching(state: AgentState) -> AgentState:
         Return only a number between 0 and 1.
         Resume: {resume_text}
         Job Description: {state.job_description}
+        Calculate match score (0-1) using weighted factors:
+        - 30% Keyword density (hard skills from JD)
+        - 25% Experience alignment (years in similar roles)
+        - 20% Education/certification matches
+        - 15% Industry-specific terminology
+        - 10% Soft skills/cultural fit
+
+        Return JSON format:
+        {{
+        "score": 0.85,
+        "breakdown": {{
+            "keyword_match": 0.9,
+            "experience_gap": -0.1,
+            "certification_bonus": +0.05
+        }},
+        "missing_keywords": ["AWS Lambda", "CI/CD"]
+        }}
         """
         response = model.invoke([HumanMessage(content=prompt)])
         semantic_match_score = float(response.content)
@@ -638,6 +655,21 @@ def generate_optimization_recommendations(state: AgentState) -> AgentState:
     11. Provide specific feedback on my education section and if it needs adjustments to better align with the job requirements.
 
     Provide your recommendations in a clear, well-organized format.
+
+    Provide recommendations with: (example)
+    ||| Before
+    - Managed servers
+    ||| After
+    - Reduced AWS EC2 costs by 35% through autoscaling implementation
+    ||| Rationale
+    Added quantifiable impact and specific technology
+
+    Priority Matrix:
+    | Urgency | Impact | Ease | Recommendation          |
+    |---------|--------|------|-------------------------|
+    | High    | High   | Low  | Add Kubernetes projects |
+    | Medium  | Medium | High | Quantify cost savings   |
+
     """
     try:
         response = model.invoke([HumanMessage(content=prompt)])
@@ -918,9 +950,6 @@ def generate_cover_letter_and_cold_email(state: AgentState) -> AgentState:
         - About Company: {state.about_company or 'Not specified'}
         - Job Requirements: {state.requirements or 'Not specified'}
         - Job Responsibilities: {state.responsibilities or 'Not specified'}
-        - Job Benefits: {state.benefits or 'Not specified'}
-        - Job Location: {state.location or 'Not specified'}
-        - Job Salary: {state.salary or 'Not specified'}
         - Available company information: {state.company_role_info or 'Not specified'}
         - Resume: {resume_text}
 
@@ -931,14 +960,18 @@ def generate_cover_letter_and_cold_email(state: AgentState) -> AgentState:
             -   Express genuine interest in the role and the company.
             -   Connect the candidate's qualifications to the specific job requirements and responsibilities.
             -   Use a formal and engaging tone.
-            - Use industry-standard terminology for this role where appropriate.
+            -   Use industry-standard terminology for this role where appropriate.
+            -   keep it under 300 words.
+            -   Do not include any extra text or explanation outside of the cover letter.
         2.  **Cold Email:**
             -   Craft a concise and engaging cold email.
             -   Express interest in the role and company.
             -   Briefly highlight the candidate's key qualifications.
             -   Include a call to action (e.g., suggest a brief introductory call).
             -   Maintain a professional yet approachable tone.
-            - Use industry-standard terminology for this role where appropriate.
+            -   Use industry-standard terminology for this role where appropriate.
+            -   keep it under 300 words.
+            -   Do not include any extra text or explanation outside of the cold email.
         3. **Delimiter:**
             - Separate the cover letter and the cold email with the delimiter: '||' (two pipe symbols).
         4. **No Extra Text:**
@@ -1123,8 +1156,6 @@ def evaluate_optimization(state: AgentState) -> AgentState:
     new_state_dict["improvement_needed"] = parsed_output.improvement_needed
     new_state_dict["feedback"] = parsed_output.feedback
     return AgentState(**new_state_dict)
-
-
 
 
 def route_optimization(state: AgentState) -> str:
