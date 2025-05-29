@@ -72,10 +72,10 @@ workflow.add_edge("semantic_matching", "perform_gap_analysis")
 workflow.add_edge("perform_gap_analysis", "generate_optimization_recommendations")
 workflow.add_edge("generate_optimization_recommendations", "generate_optimized_resume_draft")
 workflow.add_edge("generate_optimized_resume_draft", "evaluate_ats_score")
-workflow.add_edge("evaluate_ats_score", "evaluate_optimization")
+workflow.add_edge("evaluate_ats_score", "evaluate_optimization") # ADD THIS LINE
 
 workflow.add_conditional_edges(
-    "evaluate_optimization",
+    "evaluate_optimization", # CHANGE THIS LINE
     route_optimization,
     {
         "apply_targeted_improvements": "apply_targeted_improvements",
@@ -84,7 +84,7 @@ workflow.add_conditional_edges(
 )
 
 workflow.add_edge("apply_targeted_improvements", "generate_optimized_resume_draft")
-workflow.add_edge("generate_cover_letter_and_cold_email", "user_feedback_final_review") 
+workflow.add_edge("generate_cover_letter_and_cold_email", "user_feedback_final_review") # ADD THIS LINE
 workflow.add_edge("user_feedback_final_review", "export_final_documents")
 workflow.add_edge("export_final_documents", END)
 
@@ -154,6 +154,6 @@ Accommodation requests:
 If you need assistance with any part of the application or recruiting process due to a disability, please reach out to our Recruiting Accommodations Team.
 """
 
-# initial_state = AgentState(job_description=job_description, messages=[], gpt_health="Not Checked")
-# final_state = graph.invoke(initial_state)
-# print(final_state)
+initial_state = AgentState(job_description=job_description, messages=[], gpt_health="Not Checked")
+final_state = graph.invoke(initial_state)
+print(final_state)
